@@ -1,0 +1,22 @@
+﻿
+ <div class="col-sm-12">
+    <img src="../Content/ajax-loader.gif" id="loadingImg" ng-hide="consultants" />
+</div>
+<div class="col-sm-offset-3 col-sm-6" ng-hide="!consultants">
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <th class="text-center clickable" ng-click="sortData('Name')">Assignment Name<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('Name')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('AssignmentName')"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="value in consultants |orderBy:sortColumn:sortReverse">
+                <td class="text-center">{{value.Name}}</td>
+                <td class="text-center"><a ng-href="#/consultants/{{value.ConsultantId}}/edit" class="btn btn-primary" ng-click="selectConsultant(value)"><span class="fa fa-pencil"></span>Edit</a></td>
+                <td class="text-center"><a ng-href="#/consultants/{{value.ConsultantId}}/delete" class="btn btn-danger"><span class="fa fa-trash"></span>Delete</a></td>
+
+            </tr>
+        </tbody>
+    </table>
+   
+</div>

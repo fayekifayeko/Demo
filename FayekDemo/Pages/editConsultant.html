@@ -1,0 +1,20 @@
+﻿
+<div class="panel panel-default">
+    <div class="panel-heading">Edit Consultant <strong ng-bind="selectedConsultant"></strong></div>
+    <div class="panel-body">
+        <form class="form-horizontal" novalidate name="myform">
+            <div class="form-group">
+                <span style="color:red">*</span> <label class="control-label col-sm-2" for="an">Consultant Name:</label>
+                <div class="col-sm-5">
+                    <input type="text" ng-model="updatedConsultantName" class="form-control" id="an" placeholder="Enter Consultant Name" ng-required="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-8">
+                    <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="updateConsultant()" ng-disabled="myform.$invalid">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

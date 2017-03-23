@@ -1,0 +1,207 @@
+﻿
+<div class="col-sm-12">
+    <img src="../Content/ajax-loader.gif" id="loadingImg" ng-hide="assignmentView" />
+</div>
+<div class="alert alert-success" ng-hide="msg==''">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close" ng-click="clearMsg()" >&times;</a>
+    <strong>Success!   </strong>{{msg}}
+</div>
+<div class="col-sm-12" ng-hide="!assignmentView">
+    <table class="table table-hover table-bordered table-striped">
+        <thead>
+            <tr>
+                <th class="text-center clickable" ng-click="sortData('AssignmentName')">Assignment Name<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('AssignmentName')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('AssignmentName')"></i></th>
+                <th class="text-center clickable" ng-click="sortData('ConsultantName')">Consultant Name<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('ConsultantName')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('ConsultantName')"></i></th>
+                <th class="text-center clickable" ng-click="sortData('ClientName')">Client<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('ClientName')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('ClientName')"></i></th>
+                <th class="text-center clickable" ng-click="sortData('Percentage')">Percentage<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('Percentage')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('Percentage')"></i></th>
+                <th class="text-center clickable" ng-click="sortData('StartDate')">StartDate<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('StartDate')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('StartDate')"></i></th>
+                <th class="text-center clickable" ng-click="sortData('EndDate')">EndDate<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('EndDate')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('EndDate')"></i></th>
+                <th class="text-center clickable" ng-click="sortData('Comment')">Comment<i class="fa fa-arrow-up" aria-hidden="true" style="margin-left:5px;" ng-show="! sortReverse && sameColumn('Comment')"></i><i class="fa fa-arrow-down" aria-hidden="true" style="margin-left:5px;" ng-show="sortReverse && sameColumn('Comment')"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr dir-paginate="value in assignmentView |orderBy:sortColumn:sortReverse|itemsPerPage: 2|filter:{AssignmentName:srchAssignment.AssignmentName}|filter:{ConsultantName:srchConsultant.ConsultantName}|filter:search as filteredResult" class="clickable">
+                <td>{{value.AssignmentName}}</td>
+                <td>{{value.ConsultantName}}</td>
+                <td>{{value.ClientName}}</td>
+                <td>{{value.Percentage}}</td>
+                <td>{{value.StartDate|date:'medium'}}</td>
+                <td ng-class="{ activee : value.IsDeadline }">{{value.EndDate|moment}}</td>
+                <td>{{value.Comment}}</td>
+                <td><button class="btn btn-success" data-toggle="modal" data-target="#myModal"><span class="fa fa-plus"></span></button></td>
+                <td><button class="btn btn-warning" data-toggle="modal" data-target="#myModal2" ng-click="selectAssignment(value.AssignmentId)"><span class="fa fa-trash"></span></button></td>
+                <td><button class="btn btn-primary" data-toggle="modal" data-target="#myModal3" ng-click="updatedAssignment(value)"><span class="fa fa-pencil"></span></button></td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-show="filteredResult.length == 0"><small style="color:red;text-align:center;display:block"> No Matching Assignments  Has Been Found</small></div>
+
+    <dir-pagination-controls>
+        max-size="1"
+        direction-links="true"
+        boundary-links="true"
+    </dir-pagination-controls>
+</div>
+   <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Create New Assignment</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" novalidate name="myform">
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="an">Assignment Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" ng-model="newAssignment.AssignmentName" class="form-control" id="an" placeholder="Enter Assignment Name" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="cn">Consultant Name:</label>
+                        <div class="col-sm-8">
+                            <input name="consultants" id="consultants" type="text" placeholder="Type Consultant Name" required="required" ng-model="selectedConsultant" uib-typeahead="consultant as consultant.Name for consultant in consultants  | filter:$viewValue" class="form-control" typeahead-on-select="afterSelectConsultant($item, $model, $label)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" ng-required="true">
+                            <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                            <div ng-show="noResults">
+                                <i class="glyphicon glyphicon-remove"></i> No Results Found
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="cln">Client Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" ng-model="newAssignment.ClientName" class="form-control" id="cln" placeholder="Enter Client Name" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="p">Percentage:</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="1" max="100" ng-model="newAssignment.Percentage" class="form-control" id="p" placeholder="Enter Percentage" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span><label class="control-label col-sm-4" for="sd">Start Date:</label>
+                        <div class="col-sm-8">
+                            <input type="date" ng-model="newAssignment.StartDate" class="form-control" id="sd" placeholder="Enter Start Date" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="ed">End Date:</label>
+                        <div class="col-sm-8">
+                            <input type="date" ng-model="newAssignment.EndDate" class="form-control" id="ed" placeholder="Enter End Date" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span><label class="control-label col-sm-4" for="c">Comment:</label>
+                        <div class="col-sm-8">
+                            <input type="text" ng-model="newAssignment.Comment" class="form-control" id="c" placeholder="Enter Comment" ng-required="true">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="CreateAssignment()" ng-disabled="myform.$invalid">Create</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div> 
+
+
+
+<div id="myModal3" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Update Assignment: <strong>{{selectAssignmentToUpdate.AssignmentName}}</strong></h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" novalidate name="myform">
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="an">Assignment Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" ng-model="selectAssignmentToUpdate.AssignmentName" class="form-control" id="an" placeholder="Enter Assignment Name" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="cn">Consultant Name:</label>
+                        <div class="col-sm-8">
+                            <input name="consultants" id="consultants" type="text" placeholder="Type Consultant Name" required="required" ng-model="updatedSelectedConsultant" uib-typeahead="consultant as consultant.Name for consultant in consultants  | filter:$viewValue" class="form-control" typeahead-on-select="afterUpdateSelectConsultant($item, $model, $label)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" ng-required="true">
+                            <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                            <div ng-show="noResults">
+                                <i class="glyphicon glyphicon-remove"></i> No Results Found
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="cln">Client Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" ng-model="selectAssignmentToUpdate.ClientName" class="form-control" id="cln" placeholder="Enter Client Name" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="p">Percentage:</label>
+                        <div class="col-sm-8">
+                            <input type="number" min="1" max="100" ng-model="selectAssignmentToUpdate.Percentage" class="form-control" id="p" placeholder="Enter Percentage" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span><label class="control-label col-sm-4" for="sd">Start Date:</label>
+                        <div class="col-sm-8">
+                            <input type="date" ng-model="selectAssignmentToUpdate.StartDate" value="selectAssignmentToUpdate.StartDate" class="form-control" id="sd" placeholder="Enter Start Date" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span> <label class="control-label col-sm-4" for="ed">End Date:</label>
+                        <div class="col-sm-8">
+                            <input type="date" ng-model="selectAssignmentToUpdate.EndDate" class="form-control" id="ed" placeholder="Enter End Date" ng-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span style="color:red">*</span><label class="control-label col-sm-4" for="c">Comment:</label>
+                        <div class="col-sm-8">
+                            <input type="text" ng-model="selectAssignmentToUpdate.Comment" class="form-control" id="c" placeholder="Enter Comment" ng-required="true">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="update()" ng-disabled="myform.$invalid">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div> 
+
+<div id="myModal2" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Warning</h4>
+            </div>
+            <div class="modal-body">
+                <p>You are going to delete assignment are you aure?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="delete(selectedAssignmentId)">Delete</button>
+
+            </div>
+        </div>
+
+    </div>
+</div>

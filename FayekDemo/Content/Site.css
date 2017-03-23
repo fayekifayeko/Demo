@@ -1,0 +1,33 @@
+﻿.activee{
+        background-color:red;
+    }
+body{
+    padding:25px;
+    background-color:white;
+}
+table thead tr th{
+    background-color:white;
+}
+table {
+    margin-top:30px;
+}
+.clickable:hover { 
+color: blue; 
+  cursor:pointer;
+}
+#loadingImg{
+    /*top:10%;
+    left:30%;*/
+    top:40%;
+    left:40%;
+    position:fixed;
+    /*height:12%;
+    width:12%;*/
+   
+}
+
+input[disabled="disabled"]
+{
+    opacity:.4;
+    cursor:not-allowed;
+}
